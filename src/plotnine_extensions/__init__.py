@@ -14,8 +14,13 @@ from .hex import geom_hex, hex_bins, stat_bin_hex
 from .logo import LOGO_PALETTES, geom_logo, logo_data
 from .raster import RasterGroup, rasterise, rasterize
 from .repel import geom_label_repel, geom_text_repel
+from .signif import format_p, geom_bracket, p_adjust, stat_compare_means
 
 __all__ = [
+    "format_p",
+    "geom_bracket",
+    "p_adjust",
+    "stat_compare_means",
     "geom_pointinterval",
     "geom_raincloud",
     "position_jitternudge",
