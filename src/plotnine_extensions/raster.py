@@ -231,7 +231,9 @@ def rasterise(obj: T, dpi: float | None = 300, layers=None) -> T:
     if isinstance(obj, geom):
         return _wrap_geom(obj, dpi)  # pyright: ignore[reportReturnType]
     if isinstance(obj, stat):
-        lyr = layer(stat=obj)
+        # plotnine 0.15 builds layers with stat.to_layer(); later
+        # versions with layer(stat=...)
+        lyr = obj.to_layer() if hasattr(obj, "to_layer") else layer(stat=obj)
         _wrap_geom(lyr.geom, dpi)
         return lyr  # pyright: ignore[reportReturnType]
 

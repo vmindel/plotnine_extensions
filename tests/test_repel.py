@@ -125,7 +125,9 @@ def drawn_boxes(art):
 
 @pytest.mark.parametrize("geom", [geom_text_repel, geom_label_repel])
 def test_labels_do_not_overlap(df, geom):
-    p = ggplot(df, aes("x", "y", label="lab")) + geom_point() + geom(max_overlaps=np.inf)
+    p = ggplot(df, aes("x", "y", label="lab")) + geom_point() + geom(
+        max_overlaps=np.inf, max_time=20
+    )
     fig, (art,) = repel_artists(p)
     centres, size = drawn_boxes(art)
     assert art.last_layout.keep.sum() == 25
@@ -174,6 +176,23 @@ def test_xlim_keeps_labels_right_of_limit(df):
     centres, size = drawn_boxes(art)
     xpix0 = art._ax.transData.transform([[0, 0]])[0, 0]
     assert (centres[:, 0] - size[:, 0] / 2 >= xpix0 - 3.5).all()
+
+
+def test_label_region_away_from_points(df):
+    # Points at x < 0, labels confined to x > 1: every label is drawn
+    d = pd.DataFrame(
+        {"x": -np.arange(5.0) - 1, "y": np.arange(5.0), "lab": list("abcde")}
+    )
+    p = (
+        ggplot(d, aes("x", "y", label="lab"))
+        + geom_text_repel(xlim=(1, None), direction="y")
+        + __import__("plotnine").scale_x_continuous(limits=(-6, 3))
+    )
+    _, (art,) = repel_artists(p)
+    centres, size = drawn_boxes(art)
+    assert art.last_layout.keep.all()
+    xpix1 = art._ax.transData.transform([[1, 0]])[0, 0]
+    assert (centres[:, 0] - size[:, 0] / 2 >= xpix1 - 3.5).all()
 
 
 def test_xlim_with_reversed_scale(df):

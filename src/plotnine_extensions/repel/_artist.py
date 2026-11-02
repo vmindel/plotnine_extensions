@@ -185,7 +185,10 @@ class RepelLabels(Artist):
         if self._layout is not None and self._layout.key == key:
             return self._layout
 
-        x0, x1, y0, y1 = bounds
+        # Points outside the panel (e.g. a zoomed coord) get no label.
+        # Test against the panel, not the label region: with xlim/ylim a
+        # point may sit outside the region its label must move into.
+        x0, y0, x1, y1 = self._ax.bbox.extents
         inside = (
             (anchors[:, 0] >= x0 - 0.5)
             & (anchors[:, 0] <= x1 + 0.5)

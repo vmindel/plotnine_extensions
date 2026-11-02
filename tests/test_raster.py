@@ -101,10 +101,16 @@ def test_only_rasterised_layer_becomes_image(df):
     )
 
 
+def pdf_size(p):
+    buf = io.BytesIO()
+    p.save(buf, format="pdf", width=4, height=3, verbose=False)
+    return buf.getbuffer().nbytes
+
+
 def test_smaller_file(df):
     big = pd.concat([df] * 20, ignore_index=True)
-    _, vector = pdf_images(ggplot(big, aes("x", "y")) + geom_point())
-    _, raster = pdf_images(
+    vector = pdf_size(ggplot(big, aes("x", "y")) + geom_point())
+    raster = pdf_size(
         ggplot(big, aes("x", "y")) + rasterise(geom_point(), dpi=72)
     )
     assert raster < vector / 10

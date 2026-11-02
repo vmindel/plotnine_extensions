@@ -1,0 +1,80 @@
+site_name: plotnine-extensions
+site_description: ggplot2-ecosystem extensions for plotnine
+site_url: https://vmindel.github.io/plotnine_extensions/
+repo_url: https://github.com/vmindel/plotnine_extensions
+repo_name: vmindel/plotnine_extensions
+
+theme:
+  name: material
+  features:
+    - content.code.copy
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+
+nav:
+  - Home: index.md
+  - Guides:
+      - Repelling labels: repel.md
+      - Rasterising layers: rasterise.md
+      - Coming from R: from-r.md
+  - API reference: api.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: [docs]
+      check_paths: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: numpy
+            # Geoms take **kwargs like every plotnine geom, so documented
+            # parameters never appear in the signature.
+            docstring_options:
+              warn_unknown_params: false
+              warn_missing_types: false
+            # The geom docstrings are assembled at import time
+            force_inspection: true
+            show_root_heading: true
+            show_source: false
+            show_bases: false
+            members_order: source
+            heading_level: 2
+            merge_init_into_class: true
+            filters: ["!^_", "!^DEFAULT_"]
+
+# Sources pulled into pages by pymdownx.snippets, not pages themselves
+exclude_docs: |
+  examples/
+  generated/
+  gen_figures.py

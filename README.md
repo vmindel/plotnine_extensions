@@ -4,6 +4,8 @@ Extensions for [plotnine](https://github.com/has2k1/plotnine) in the spirit
 of the ggplot2 ecosystem. Everything here is a plain plotnine geom or
 helper: install the package, import it, and add the layers to a plot.
 
+**Documentation: https://vmindel.github.io/plotnine_extensions/**
+
 ```bash
 pip install git+https://github.com/vmindel/plotnine_extensions
 ```
@@ -43,7 +45,7 @@ output it changes nothing.
 
 ## `geom_text_repel` / `geom_label_repel`
 
-![volcano](docs/volcano.png)
+![volcano](docs/img/volcano.png)
 
 ```python
 from plotnine_extensions import geom_text_repel, geom_label_repel
@@ -94,10 +96,15 @@ ggrepel is GPL-3; porting its C++ would have required GPL here as well.
 ## Development
 
 ```bash
-pip install -e '.[test]'
+pip install -e '.[test,docs]'
 pytest
-python examples/demo.py   # writes examples/out/*.png, *.pdf
+python docs/gen_figures.py   # run the docs examples, refresh docs/img
+mkdocs serve                 # preview the docs at http://127.0.0.1:8000
 ```
+
+Pushes to the default branch build and publish the docs to GitHub Pages
+(`.github/workflows/docs.yml`); other branches and pull requests only
+build them, which also checks that every example still runs.
 
 Tested against plotnine's development branch (post 0.15.8). It uses a few
 plotnine internals (`plotnine._utils`, geom `draw_panel`/`draw_layer`), so

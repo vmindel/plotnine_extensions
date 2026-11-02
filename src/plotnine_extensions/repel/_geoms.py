@@ -59,17 +59,17 @@ _PARAMS_DOC = """
     min_segment_length : float, default=6
         Segments shorter than this (points) are not drawn.
     segment_color : str, default=None
-        Segment colour. `None`{.py} uses the label's colour.
+        Segment colour. `None` uses the label's colour.
     segment_size : float, default=0.5
         Segment line width, in points.
     segment_alpha : float, default=None
-        Segment transparency. `None`{.py} uses the label's alpha.
+        Segment transparency. `None` uses the label's alpha.
     segment_linetype : str, default="solid"
         Segment line style.
     arrow : dict, default=None
         If given, segments end in an arrow at the data point. The dict
         goes to matplotlib's `FancyArrowPatch`, e.g.
-        `{"arrowstyle": "-|>", "mutation_scale": 8}`{.py}.
+        `{"arrowstyle": "-|>", "mutation_scale": 8}`.
     force : float, default=1
         Strength of repulsion between overlapping labels and points.
     force_pull : float, default=1
@@ -81,16 +81,16 @@ _PARAMS_DOC = """
     max_overlaps : float, default=10
         A label that, after placement, still overlaps more than this many
         other labels and points is not drawn. Earlier rows win, so sort
-        the data by priority. Use `np.inf`{.py} to keep every label.
+        the data by priority. Use `np.inf` to keep every label.
     direction : str, default="both"
         Move labels in `"both"`, only `"x"` or only `"y"` directions.
     seed : int, default=1
         Seed of the random tie-breaking, so a figure renders the same
-        every time. `None`{.py} for a different layout each draw.
+        every time. `None` for a different layout each draw.
     xlim, ylim : tuple, default=None
         Data range, `(min, max)`, that labels must stay within, in the
         units of the data (before any scale transformation such as log).
-        Either end can be `None`{.py} for the panel edge.
+        Either end can be `None` for the panel edge.
     nudge_x, nudge_y : float, default=0
         Data-unit offset of each label's starting position. Unlike in
         `geom_text`, segments still point at the original position.
@@ -252,10 +252,20 @@ class geom_text_repel(geom_text):
 
     Parameters
     ----------
-    {_PARAMS_DOC}
+    mapping : aes, default=None
+        Aesthetic mappings. `x`, `y` and `label` are required; `color`,
+        `size`, `alpha`, `angle`, `family`, `fontweight`, `fontstyle`
+        and `lineheight` work as in `geom_text`.
+    data : DataFrame, default=None
+        Layer data, if different from the plot's.
+    {_PARAMS_DOC.strip()}
+    parse, format_string, path_effects :
+        As in `geom_text`.
     """
 
-    DEFAULT_PARAMS = {**_REPEL_PARAMS}
+    # Spelled out in full: plotnine 0.15 does not merge DEFAULT_PARAMS
+    # along the class hierarchy, later versions do.
+    DEFAULT_PARAMS = {**geom_text.DEFAULT_PARAMS, **_REPEL_PARAMS}
 
     def __init__(
         self,
@@ -310,13 +320,25 @@ class geom_label_repel(geom_text_repel):
 
     Parameters
     ----------
-    {_PARAMS_DOC}
+    mapping : aes, default=None
+        Aesthetic mappings. `x`, `y` and `label` are required; `color`,
+        `size`, `alpha`, `angle`, `family`, `fontweight`, `fontstyle`
+        and `lineheight` work as in `geom_text`.
+    data : DataFrame, default=None
+        Layer data, if different from the plot's.
+    {_PARAMS_DOC.strip()}
+    parse, format_string, path_effects :
+        As in `geom_text`.
     boxstyle, boxcolor, label_padding, label_r, label_size, tooth_size :
-        As in `geom_label`.
+        Label box styling, as in `geom_label`. `fill` is an aesthetic.
     """
 
     DEFAULT_AES = {**geom_text.DEFAULT_AES, "fill": "white"}
-    DEFAULT_PARAMS = {**geom_label.DEFAULT_PARAMS}
+    DEFAULT_PARAMS = {
+        **geom_text_repel.DEFAULT_PARAMS,
+        **geom_label.DEFAULT_PARAMS,
+        **_REPEL_PARAMS,
+    }
     draw_legend = staticmethod(geom_label.draw_legend)
 
     def draw_panel(
