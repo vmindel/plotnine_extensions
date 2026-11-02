@@ -47,6 +47,18 @@ def test_curve_draws_one_patch_per_row():
     assert len(patches) == 3
 
 
+def test_curve_shrink_shortens_the_drawn_path():
+    d = pd.DataFrame({"x": [0], "y": [0], "xend": [1], "yend": [0]})
+
+    def length(**kw):
+        fig = built(ggplot(d, aes("x", "y", xend="xend", yend="yend")) + geom_curve(curvature=0, **kw))
+        (patch,) = [a for a in fig.axes[0].patches if isinstance(a, FancyArrowPatch)]
+        v = patch.get_path().vertices
+        return v[:, 0].max() - v[:, 0].min()
+
+    assert length(shrink=20) < length()
+
+
 def test_curve_angle_validated():
     with pytest.raises(ValueError):
         geom_curve(angle=0)

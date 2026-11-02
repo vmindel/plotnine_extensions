@@ -14,6 +14,10 @@ pip install git+https://github.com/vmindel/plotnine_extensions
 |---|---|---|
 | `rasterise()` | ggrastr | Renders one layer as a bitmap at its own dpi inside PDF/SVG/PS output |
 | `geom_text_repel`, `geom_label_repel` | ggrepel | Labels that move off each other and off the points, with leader segments |
+| `stat_compare_means`, `geom_bracket` | ggpubr, ggsignif | Tests between groups as brackets with stars or p-values |
+| `stat_halfeye`, `geom_raincloud` | ggdist | Densities with medians and intervals; raincloud plots |
+| `geom_logo`, `logo_data` | ggseqlogo | Sequence logos, including signed contribution scores |
+| `geom_curve`, `geom_hex` | ggplot2 | Curved arrows; hexagonal binning |
 
 ## `rasterise`: per-layer rasterisation
 

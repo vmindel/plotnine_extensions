@@ -85,6 +85,9 @@ class geom_curve(geom_segment):
         Arrow heads, as for `geom_segment`.
     lineend : str, default="butt"
         Line end style.
+    shrink : float or (float, float), default=0
+        Stop the curve this many points short of its start and end, e.g.
+        so arrow heads are not hidden under point markers. Not in ggplot2.
 
     Notes
     -----
@@ -98,6 +101,7 @@ class geom_curve(geom_segment):
         **geom_segment.DEFAULT_PARAMS,
         "curvature": 0.5,
         "angle": 90,
+        "shrink": 0,
     }
 
     def __init__(self, mapping=None, data=None, **kwargs):
@@ -119,6 +123,8 @@ class geom_curve(geom_segment):
         params = self.params
         connection = _Bend(params["curvature"], params["angle"])
         style, head = _arrowstyle(params["arrow"])
+        shrink = params["shrink"]
+        shrink_a, shrink_b = (shrink, shrink) if np.isscalar(shrink) else shrink
         if head:
             style = style + "," + ",".join(f"{k}={v}" for k, v in head.items())
         color = to_rgba(data["color"], data["alpha"])
@@ -140,8 +146,8 @@ class geom_curve(geom_segment):
                 (x1, y1),
                 connectionstyle=connection,
                 arrowstyle=style,
-                shrinkA=0,
-                shrinkB=0,
+                shrinkA=shrink_a,
+                shrinkB=shrink_b,
                 mutation_scale=1,
                 color=color[i],
                 linewidth=lw,
