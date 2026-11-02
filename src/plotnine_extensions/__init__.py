@@ -2,10 +2,14 @@
 ggplot2-ecosystem extensions for plotnine
 """
 
+from .logo import LOGO_PALETTES, geom_logo, logo_data
 from .raster import RasterGroup, rasterise, rasterize
 from .repel import geom_label_repel, geom_text_repel
 
 __all__ = [
+    "LOGO_PALETTES",
+    "geom_logo",
+    "logo_data",
     "RasterGroup",
     "geom_label_repel",
     "geom_text_repel",
