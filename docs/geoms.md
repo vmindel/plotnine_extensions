@@ -43,3 +43,6 @@ faceted plot share one grid. Computed variables: `count` (the default
 fill), `density`, `width`, `height`; map `weight` to sum weights instead
 of counting. With `stat="identity"`, give the bin size as
 `aes(width=..., height=...)` or `width=, height=`.
+
+`hex_bins(x, y, binwidth, origin=(0, 0), weight=None)` does the binning
+without plotting and returns the centres and counts as a DataFrame.

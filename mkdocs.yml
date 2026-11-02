@@ -35,6 +35,7 @@ nav:
       - Sequence logos: logo.md
       - Curves and hexagons: geoms.md
       - Coming from R: from-r.md
+  - Claude Code skill: claude-skill.md
   - API reference: api.md
 
 markdown_extensions:

@@ -21,8 +21,14 @@ dependencies = [
 test = ["pytest>=8", "pypdf>=4"]
 docs = ["mkdocs>=1.6", "mkdocs-material>=9.5", "mkdocstrings[python]>=0.29"]
 
+[project.scripts]
+plotnine-extensions-install-skills = "plotnine_extensions._skills.install:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+plotnine_extensions = ["_skills/data/*.md", "_skills/data/references/*.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -97,6 +97,12 @@ springs to the anchors, then a pass that swaps labels whose segments
 cross). No ggrepel code was used, so the package can stay MIT licensed.
 ggrepel is GPL-3; porting its C++ would have required GPL here as well.
 
+## Claude Code skill
+
+The package ships a skill that teaches Claude Code these features and
+their pitfalls. Install it once with `plotnine-extensions-install-skills`;
+see the [docs](https://vmindel.github.io/plotnine_extensions/claude-skill/).
+
 ## Development
 
 ```bash

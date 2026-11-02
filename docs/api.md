@@ -6,6 +6,10 @@
 
 ::: plotnine_extensions.rasterise
 
+`rasterize` is the same function under its American spelling.
+
+::: plotnine_extensions.RasterGroup
+
 ## Significance
 
 ::: plotnine_extensions.stat_compare_means
@@ -33,6 +37,8 @@
 ::: plotnine_extensions.geom_logo
 
 ::: plotnine_extensions.logo_data
+
+::: plotnine_extensions.LOGO_PALETTES
 
 ## Curves and hexagons
 
