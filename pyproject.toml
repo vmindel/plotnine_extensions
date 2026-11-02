@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plotnine-extensions"
+version = "0.1.0"
+description = "ggplot2-ecosystem extensions for plotnine: per-layer rasterisation, repelling labels, and more"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "plotnine>=0.15",
+    "matplotlib>=3.10",
+    "numpy>=1.25",
+    "pandas>=2.2",
+    "scipy>=1.15",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "pypdf>=4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 79
