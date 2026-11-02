@@ -302,7 +302,10 @@ def repel(
                 break
 
         v = c - prev
-        if not stuck.any():
+        # The last projection pass was measured before it moved the boxes;
+        # confirm the layout it produced is clean before accepting it.
+        clean = not stuck.any() and not _has_overlap(c, half, points, radius)
+        if clean:
             # Springs keep nudging boxes into contact, so an overlap-free
             # layout need not be a still one. Keep the latest clean layout
             # and stop once it has settled.

@@ -88,7 +88,6 @@ class RasterGroup(Artist):
         self.stale = False
 
     def _draw_as_image(self, renderer: Any):
-        from matplotlib._tight_bbox import process_figure_for_rasterizing
         from matplotlib.backends.backend_agg import RendererAgg
 
         fig = renderer.figure
@@ -100,13 +99,13 @@ class RasterGroup(Artist):
         agg = RendererAgg(int(width_in * dpi), int(height_in * dpi), dpi)
         fig.dpi = dpi
         if restore:
-            restore = process_figure_for_rasterizing(fig, restore, agg)
+            restore = _process_for_rasterizing(fig, restore, agg)
         try:
             self._draw_children(agg)
         finally:
             fig.dpi = figdpi
             if restore:
-                restore = process_figure_for_rasterizing(
+                restore = _process_for_rasterizing(
                     fig, restore, renderer._vector_renderer, figdpi
                 )
                 renderer._bbox_inches_restore = restore
@@ -134,6 +133,21 @@ class RasterGroup(Artist):
             Affine2D().scale(w_px * scale, h_px * scale),
         )
         gc.restore()
+
+
+def _process_for_rasterizing(fig, restore, renderer, fixed_dpi=None):
+    """
+    Re-fit a tight bbox after a dpi change
+
+    matplotlib 3.11 added the renderer argument; 3.10 does not take it.
+    """
+    import inspect
+
+    from matplotlib._tight_bbox import process_figure_for_rasterizing as f
+
+    if "renderer" in inspect.signature(f).parameters:
+        return f(fig, restore, renderer, fixed_dpi)
+    return f(fig, restore, fixed_dpi)
 
 
 def _is_vector(renderer: RendererBase) -> bool:

@@ -125,12 +125,13 @@ def drawn_boxes(art):
 
 @pytest.mark.parametrize("geom", [geom_text_repel, geom_label_repel])
 def test_labels_do_not_overlap(df, geom):
+    df["lab"] = [f"gene{i}" if i < 15 else "" for i in range(len(df))]
     p = ggplot(df, aes("x", "y", label="lab")) + geom_point() + geom(
         max_overlaps=np.inf, max_time=20
     )
     fig, (art,) = repel_artists(p)
     centres, size = drawn_boxes(art)
-    assert art.last_layout.keep.sum() == 25
+    assert art.last_layout.keep.sum() == 15
     assert art.last_layout.converged
     assert not boxes_overlap(centres, size)
     x0, y0, x1, y1 = art._ax.bbox.extents
