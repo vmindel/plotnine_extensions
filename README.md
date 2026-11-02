@@ -14,6 +14,10 @@ pip install git+https://github.com/vmindel/plotnine_extensions
 |---|---|---|
 | `rasterise()` | ggrastr | Renders one layer as a bitmap at its own dpi inside PDF/SVG/PS output |
 | `geom_text_repel`, `geom_label_repel` | ggrepel | Labels that move off each other and off the points, with leader segments |
+| `stat_compare_means`, `geom_bracket` | ggpubr, ggsignif | Tests between groups as brackets with stars or p-values |
+| `stat_halfeye`, `geom_raincloud` | ggdist | Densities with medians and intervals; raincloud plots |
+| `geom_logo`, `logo_data` | ggseqlogo | Sequence logos, including signed contribution scores |
+| `geom_curve`, `geom_hex` | ggplot2 | Curved arrows; hexagonal binning |
 
 ## `rasterise`: per-layer rasterisation
 
@@ -92,6 +96,12 @@ The solver is an independent implementation (position-based dynamics with
 springs to the anchors, then a pass that swaps labels whose segments
 cross). No ggrepel code was used, so the package can stay MIT licensed.
 ggrepel is GPL-3; porting its C++ would have required GPL here as well.
+
+## Claude Code skill
+
+The package ships a skill that teaches Claude Code these features and
+their pitfalls. Install it once with `plotnine-extensions-install-skills`;
+see the [docs](https://vmindel.github.io/plotnine_extensions/claude-skill/).
 
 ## Development
 

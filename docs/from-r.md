@@ -7,6 +7,15 @@
 | `ggrastr::rasterise(layer, dpi = 300)` | `rasterise(layer, dpi=300)` |
 | `ggrastr::rasterise(plot, layers = "Point")` | `rasterise(p, layers=["point"])` |
 | `ggrastr::geom_point_rast()` | `rasterise(geom_point())` |
+| `ggpubr::stat_compare_means(comparisons = ...)` | `stat_compare_means(comparisons=...)` (Holm-corrected by default) |
+| `ggsignif::geom_signif()` | `stat_compare_means()`, or `geom_bracket()` for your own p-values |
+| `ggpubr::stat_pvalue_manual()` | `geom_bracket()` |
+| `ggdist::stat_halfeye()` | `stat_halfeye()` |
+| `ggdist::stat_pointinterval()` | `stat_pointinterval()` |
+| raincloud (ggdist + jitter) | `geom_raincloud()` |
+| `ggseqlogo::geom_logo()` | `logo_data()` + `geom_logo()` |
+| `ggplot2::geom_curve()` | `geom_curve()` |
+| `ggplot2::geom_hex()` | `geom_hex()` |
 
 ## ggrepel arguments
 

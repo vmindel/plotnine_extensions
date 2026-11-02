@@ -30,7 +30,12 @@ nav:
   - Guides:
       - Repelling labels: repel.md
       - Rasterising layers: rasterise.md
+      - Significance brackets: signif.md
+      - Distributions: distributions.md
+      - Sequence logos: logo.md
+      - Curves and hexagons: geoms.md
       - Coming from R: from-r.md
+  - Claude Code skill: claude-skill.md
   - API reference: api.md
 
 markdown_extensions:

@@ -20,6 +20,17 @@ IMG = HERE / "img"
 GENERATED = HERE / "generated"
 
 SIZES = {
+    "logo_bits": (6, 2.4),
+    "logo_contrib": (7, 2.4),
+    "logo_ism": (7, 2.6),
+    "curve": (6, 3),
+    "hex": (5.5, 4.5),
+    "halfeye": (5, 4),
+    "raincloud": (5.5, 4),
+    "signif_pairs": (5, 4.5),
+    "signif_ref": (5, 4.2),
+    "signif_dodge": (5.5, 4),
+    "signif_manual": (5, 4.2),
     "segments": (6, 4.5),
     "line_ends": (6, 4),
     "volcano": (6, 5),
