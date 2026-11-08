@@ -1,5 +1,6 @@
 import inspect
 import re
+from pathlib import Path
 
 import pytest
 
@@ -75,6 +76,13 @@ def test_signature_blocks_use_real_parameters():
             shown = set(re.findall(r"(\w+)=", top))
             params = parameters(getattr(pnx, name))
             assert shown <= params, f"{path.name}: {name} has no {shown - params}"
+
+
+def test_docs_page_lists_every_reference():
+    page = (Path(__file__).parents[1] / "docs" / "claude-skill.md").read_text()
+    listed = set(re.findall(r"`(references/[\w.-]+)`", page))
+    on_disk = {f"references/{p.name}" for p in (SKILL / "references").glob("*.md")}
+    assert listed == on_disk, f"docs/claude-skill.md lists {listed}, on disk {on_disk}"
 
 
 def test_install(tmp_path, capsys):

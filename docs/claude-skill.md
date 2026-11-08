@@ -29,7 +29,7 @@ Then ask in plain language: "label the top genes on this volcano plot
 without overlaps", "add Holm-corrected t-test brackets against WT",
 "raincloud of expression by condition, horizontal", "logo of these
 contribution scores for this sequence", "make this 200k-point scatter a
-small PDF".
+small PDF", "give this boxplot a ggpubr look without the x labels".
 
 ## What's inside
 
@@ -44,6 +44,7 @@ it reads only when the task needs it.
 | `references/distributions.md` | `stat_halfeye`, `geom_raincloud`, `stat_pointinterval`, `position_jitternudge` |
 | `references/logo.md` | `geom_logo`, `logo_data`, palettes |
 | `references/geoms.md` | `geom_curve`, `geom_hex`, `stat_bin_hex`, `hex_bins` |
+| `references/themes.md` | `theme_pubr`, `theme_pubclean`, `theme_classic2`, `theme_cowplot` and the minimal themes, `rremove`, `rotate_x_text`, `background_grid`, `panel_border` and the other helpers |
 
 The test suite checks that:
 
