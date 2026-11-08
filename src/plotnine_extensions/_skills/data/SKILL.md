@@ -1,6 +1,6 @@
 ---
 name: plotnine-extensions
-description: Use when making plotnine (ggplot-style) figures that need what the ggplot2 extension ecosystem provides, via plotnine_extensions (import plotnine_extensions as pnx). Triggers on repelling/non-overlapping text labels (ggrepel), rasterising a dense layer inside a PDF/SVG (ggrastr), significance brackets, p-values or stars between groups (ggpubr, ggsignif), half-eye, interval or raincloud plots (ggdist), sequence logos, contribution-score or ISM logos (ggseqlogo), curved arrows (geom_curve), hexagonal binning (geom_hex). Router skill: read the relevant file under references/ before writing code.
+description: Use when making plotnine (ggplot-style) figures that need what the ggplot2 extension ecosystem provides, via plotnine_extensions (import plotnine_extensions as pnx). Triggers on repelling/non-overlapping text labels (ggrepel), rasterising a dense layer inside a PDF/SVG (ggrastr), significance brackets, p-values or stars between groups (ggpubr, ggsignif), half-eye, interval or raincloud plots (ggdist), sequence logos, contribution-score or ISM logos (ggseqlogo), curved arrows (geom_curve), hexagonal binning (geom_hex), publication themes (theme_pubr, theme_cowplot, rremove, background_grid). Router skill: read the relevant file under references/ before writing code.
 ---
 
 # plotnine_extensions
@@ -20,6 +20,7 @@ the file for the task before writing code.
 | **distributions with summaries**: `pnx.stat_halfeye`, `pnx.geom_raincloud`, `pnx.stat_pointinterval` | `references/distributions.md` |
 | **sequence logos**, from sequences or contribution / ISM matrices: `pnx.geom_logo`, `pnx.logo_data` | `references/logo.md` |
 | **curved arrows, hexagonal binning**: `pnx.geom_curve`, `pnx.geom_hex` | `references/geoms.md` |
+| **ggpubr / cowplot themes** and element helpers: `pnx.theme_pubr`, `pnx.theme_cowplot`, `pnx.theme_minimal_hgrid`, `pnx.rremove`, `pnx.background_grid` | `references/themes.md` |
 
 ## Conventions
 

@@ -34,6 +34,10 @@ SIZES = {
     "segments": (6, 4.5),
     "line_ends": (6, 4),
     "volcano": (6, 5),
+    "themes_pubr": (4.5, 4.2),
+    "themes_cowplot": (5.5, 4),
+    # a composition: its size comes from figure_size inside the example
+    "themes_gallery": (13, 6),
 }
 
 

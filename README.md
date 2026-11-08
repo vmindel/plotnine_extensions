@@ -18,6 +18,7 @@ pip install git+https://github.com/vmindel/plotnine_extensions
 | `stat_halfeye`, `geom_raincloud` | ggdist | Densities with medians and intervals; raincloud plots |
 | `geom_logo`, `logo_data` | ggseqlogo | Sequence logos, including signed contribution scores |
 | `geom_curve`, `geom_hex` | ggplot2 | Curved arrows; hexagonal binning |
+| `theme_pubr`, `theme_cowplot`, `theme_minimal_hgrid`, ... | ggpubr, cowplot | Publication themes, plus `rremove`, `rotate_x_text`, `background_grid` and other helpers |
 
 ## `rasterise`: per-layer rasterisation
 
