@@ -34,6 +34,7 @@ nav:
       - Distributions: distributions.md
       - Sequence logos: logo.md
       - Curves and hexagons: geoms.md
+      - Themes: themes.md
       - Coming from R: from-r.md
   - Claude Code skill: claude-skill.md
   - API reference: api.md

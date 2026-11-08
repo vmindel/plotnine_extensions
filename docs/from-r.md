@@ -16,6 +16,11 @@
 | `ggseqlogo::geom_logo()` | `logo_data()` + `geom_logo()` |
 | `ggplot2::geom_curve()` | `geom_curve()` |
 | `ggplot2::geom_hex()` | `geom_hex()` |
+| `ggpubr::theme_pubr()`, `theme_pubclean()`, `theme_classic2()` | same names |
+| `ggpubr::rremove("x.text")` | `rremove("x.text")`, several names per call |
+| `ggpubr::rotate_x_text()`, `grids()`, `border()`, `bgcolor()`, `font()`, `clean_theme()` | same names |
+| `cowplot::theme_cowplot()`, `theme_half_open()`, `theme_minimal_grid()`, `theme_minimal_hgrid()`, `theme_minimal_vgrid()`, `theme_map()`, `theme_nothing()` | same names; `line_size` in points (R's 0.5 is 1 here) |
+| `cowplot::background_grid()`, `panel_border()` | same names; `size.major` becomes `size_major`, in points |
 
 ## ggrepel arguments
 

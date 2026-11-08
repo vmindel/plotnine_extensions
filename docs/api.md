@@ -49,3 +49,47 @@
 ::: plotnine_extensions.stat_bin_hex
 
 ::: plotnine_extensions.hex_bins
+
+## Themes: ggpubr
+
+::: plotnine_extensions.theme_pubr
+
+::: plotnine_extensions.theme_pubclean
+
+::: plotnine_extensions.theme_classic2
+
+::: plotnine_extensions.clean_theme
+
+::: plotnine_extensions.rotate_x_text
+
+::: plotnine_extensions.rotate_y_text
+
+::: plotnine_extensions.rremove
+
+::: plotnine_extensions.grids
+
+::: plotnine_extensions.border
+
+::: plotnine_extensions.bgcolor
+
+::: plotnine_extensions.font
+
+## Themes: cowplot
+
+::: plotnine_extensions.theme_cowplot
+
+::: plotnine_extensions.theme_half_open
+
+::: plotnine_extensions.theme_minimal_grid
+
+::: plotnine_extensions.theme_minimal_hgrid
+
+::: plotnine_extensions.theme_minimal_vgrid
+
+::: plotnine_extensions.theme_map
+
+::: plotnine_extensions.theme_nothing
+
+::: plotnine_extensions.background_grid
+
+::: plotnine_extensions.panel_border
