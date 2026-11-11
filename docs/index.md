@@ -14,6 +14,7 @@ an ordinary plotnine layer: import it and add it to a plot with `+`.
 | [`geom_curve`, `geom_hex`](geoms.md) | ggplot2 | Curved arrows; hexagonal binning |
 | [`theme_pubr`, `theme_cowplot`, ...](themes.md) | ggpubr, cowplot | Publication themes and helpers such as `rremove`, `rotate_x_text`, `background_grid` |
 | [`ggcorrplot`, `cor_pmat`](corr.md) | ggcorrplot | Correlation matrix heatmaps, clustered, with p-values |
+| [`new_scale_fill`, `new_scale_color`](newscale.md) | ggnewscale | Several scales, and legends, for one aesthetic |
 
 ## Install
 

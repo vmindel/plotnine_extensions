@@ -20,6 +20,7 @@ pip install git+https://github.com/vmindel/plotnine_extensions
 | `geom_curve`, `geom_hex` | ggplot2 | Curved arrows; hexagonal binning |
 | `theme_pubr`, `theme_cowplot`, `theme_minimal_hgrid`, ... | ggpubr, cowplot | Publication themes, plus `rremove`, `rotate_x_text`, `background_grid` and other helpers |
 | `ggcorrplot`, `cor_pmat` | ggcorrplot | Correlation matrix heatmaps: triangles, clustering, p-value marks |
+| `new_scale_fill`, `new_scale_color`, `new_scale` | ggnewscale | Several scales, and legends, for one aesthetic |
 
 ## `rasterise`: per-layer rasterisation
 

@@ -12,6 +12,12 @@ from .distributions import (
     stat_pointinterval,
 )
 from .hex import geom_hex, hex_bins, stat_bin_hex
+from .newscale import (
+    new_scale,
+    new_scale_color,
+    new_scale_colour,
+    new_scale_fill,
+)
 from .logo import LOGO_PALETTES, geom_logo, logo_data
 from .raster import RasterGroup, rasterise, rasterize
 from .repel import geom_label_repel, geom_text_repel
@@ -58,6 +64,10 @@ __all__ = [
     "LOGO_PALETTES",
     "geom_logo",
     "logo_data",
+    "new_scale",
+    "new_scale_color",
+    "new_scale_colour",
+    "new_scale_fill",
     "RasterGroup",
     "geom_label_repel",
     "geom_text_repel",
