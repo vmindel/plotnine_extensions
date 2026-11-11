@@ -44,6 +44,7 @@ it reads only when the task needs it.
 | `references/distributions.md` | `stat_halfeye`, `geom_raincloud`, `stat_pointinterval`, `position_jitternudge` |
 | `references/logo.md` | `geom_logo`, `logo_data`, palettes |
 | `references/geoms.md` | `geom_curve`, `geom_hex`, `stat_bin_hex`, `hex_bins` |
+| `references/corr.md` | `ggcorrplot`, `cor_pmat` |
 | `references/themes.md` | `theme_pubr`, `theme_pubclean`, `theme_classic2`, `theme_cowplot` and the minimal themes, `rremove`, `rotate_x_text`, `background_grid`, `panel_border` and the other helpers |
 
 The test suite checks that:
