@@ -137,6 +137,41 @@ def _hc_order(corr: pd.DataFrame, method: str) -> list:
     return list(corr.index[leaves_list(linkage(squareform(d), method))])
 
 
+def _align_matrix(m, corr: pd.DataFrame, what: str, strict: bool = True):
+    """A matrix laid out like `corr`: DataFrames by label, arrays by position"""
+    if m is None:
+        return None
+    if isinstance(m, pd.DataFrame):
+        if strict:
+            missing = set(corr.index) - set(m.index) | (
+                set(corr.columns) - set(m.columns)
+            )
+            if missing:
+                raise ValueError(f"{what} lacks {sorted(map(str, missing))}")
+        m = m.astype(float).reindex(index=corr.index, columns=corr.columns)
+        if m.isna().all(axis=None):
+            raise ValueError(f"{what} shares no labels with corr")
+        return m
+    a = np.asarray(m, float)
+    if a.shape != corr.shape:
+        raise ValueError(f"{what} has shape {a.shape}, corr has {corr.shape}")
+    return pd.DataFrame(a, index=corr.index, columns=corr.columns)
+
+
+def _align_vector(v, corr: pd.DataFrame, what: str):
+    if v is None:
+        return None
+    if isinstance(v, pd.Series):
+        missing = set(corr.index) - set(v.index)
+        if missing:
+            raise ValueError(f"{what} lacks {sorted(map(str, missing))}")
+        return v.astype(float).reindex(corr.index)
+    a = np.asarray(v, float)
+    if a.shape != (len(corr),):
+        raise ValueError(f"{what} has shape {a.shape}, needs ({len(corr)},)")
+    return pd.Series(a, index=corr.index)
+
+
 def _fmt(v: float, digits: int) -> str:
     # + 0.0 turns -0.00 into 0.00
     return f"{round(v, digits) + 0.0:.{digits}f}"
@@ -168,13 +203,25 @@ def ggcorrplot(
     tl_col: str = "black",
     tl_srt: float = 45,
     digits: int = 2,
+    *,
+    upper=None,
+    diag=None,
+    p_upper=None,
+    p_diag=None,
+    lab_diag: bool | None = None,
 ) -> ggplot:
     """
     Heatmap of a correlation matrix
 
     Returns an ordinary `ggplot`, so layers, scales and themes can be
     added with `+`. Its data has one row per drawn cell, with columns
-    `var1` (x), `var2` (y), `value`, and `pvalue` when `p_mat` is given.
+    `var1` (x), `var2` (y), `value`, `abs_corr`, `part` (`"lower"`,
+    `"upper"` or `"diag"`), and `pvalue` when p-values are given.
+
+    The lower triangle is the bottom-right one (x after y). With `upper`
+    and `diag`, one figure can hold two matrices and a per-variable
+    score, e.g. observed correlations below, predicted ones above and
+    observed-vs-predicted accuracy on the diagonal.
 
     Parameters
     ----------
@@ -227,6 +274,21 @@ def ggcorrplot(
         Rotation of the x tick labels in degrees.
     digits : int
         Decimals of the cell labels.
+    upper : DataFrame or array, optional
+        A second matrix for the upper triangle; `corr` then fills only
+        the lower one. Needs `type="full"`. Clustering (`hc_order`) uses
+        `corr` alone.
+    diag : Series or array, optional
+        One value per variable for the diagonal, e.g.
+        `obs.corrwith(pred)`. A Series is aligned to `corr` by label.
+    p_upper : DataFrame or array, optional
+        p-values for `upper`, as `p_mat` is for `corr`.
+    p_diag : Series or array, optional
+        p-values for `diag`.
+    lab_diag : bool, optional
+        Label the diagonal cells. By default when `diag` is given (its
+        values share the colour scale but mean something else) or when
+        `lab` is set.
     """
     if method not in ("square", "circle"):
         raise ValueError(f'method must be "square" or "circle", got {method!r}')
@@ -248,28 +310,35 @@ def ggcorrplot(
         )
     if list(corr.index) != list(corr.columns):
         raise ValueError("corr must have the same labels on rows and columns")
-    if p_mat is not None:
-        if isinstance(p_mat, pd.DataFrame):
-            p_mat = p_mat.astype(float).reindex(
-                index=corr.index, columns=corr.columns
-            )
-            if p_mat.isna().all(axis=None):
-                raise ValueError("p_mat shares no labels with corr")
-        else:
-            a = np.asarray(p_mat, float)
-            if a.shape != corr.shape:
-                raise ValueError(
-                    f"p_mat has shape {a.shape}, corr has {corr.shape}"
-                )
-            p_mat = pd.DataFrame(a, index=corr.index, columns=corr.columns)
+    if upper is not None and type != "full":
+        raise ValueError('upper needs type="full"')
+    if p_upper is not None and upper is None:
+        raise ValueError("p_upper needs upper")
+    if p_diag is not None and diag is None:
+        raise ValueError("p_diag needs diag")
+    if diag is not None and show_diag is False:
+        raise ValueError("diag given but show_diag=False")
+    p_mat = _align_matrix(p_mat, corr, "p_mat", strict=False)
+    upper = _align_matrix(upper, corr, "upper")
+    p_upper = _align_matrix(p_upper, corr, "p_upper")
+    diag = _align_vector(diag, corr, "diag")
+    p_diag = _align_vector(p_diag, corr, "p_diag")
+    for name, v in (("upper", upper), ("diag", diag)):
+        if v is not None and np.nanmax(np.abs(v.to_numpy()), initial=0) > 1 + 1e-8:
+            raise ValueError(f"{name} has values outside [-1, 1]")
 
     if hc_order:
         order = _hc_order(corr, hc_method)
         corr = corr.loc[order, order]
-        if p_mat is not None:
-            p_mat = p_mat.loc[order, order]
+        p_mat = None if p_mat is None else p_mat.loc[order, order]
+        upper = None if upper is None else upper.loc[order, order]
+        p_upper = None if p_upper is None else p_upper.loc[order, order]
+        diag = None if diag is None else diag.loc[order]
+        p_diag = None if p_diag is None else p_diag.loc[order]
     if show_diag is None:
-        show_diag = type == "full"
+        show_diag = type == "full" or diag is not None
+    if lab_diag is None:
+        lab_diag = lab or diag is not None
 
     names = list(corr.index)
     n = len(names)
@@ -282,18 +351,32 @@ def ggcorrplot(
     if not show_diag:
         keep &= i != j
     i, j = i[keep], j[keep]
+    part = np.select([i > j, i < j], ["lower", "upper"], "diag")
+    is_up, is_diag = part == "upper", part == "diag"
+
+    def assemble(mat, up, dg):
+        v = np.full(len(i), np.nan)
+        if mat is not None:
+            v = mat.to_numpy()[i, j].copy()
+        if upper is not None:
+            v[is_up] = np.nan if up is None else up.to_numpy()[i, j][is_up]
+        if diag is not None:
+            v[is_diag] = np.nan if dg is None else dg.to_numpy()[i][is_diag]
+        return v
+
     df = pd.DataFrame(
         {
             "var1": pd.Categorical.from_codes(i, names),
             "var2": pd.Categorical.from_codes(j, names),
-            "value": corr.to_numpy()[i, j],
+            "value": assemble(corr, upper, diag),
+            "part": part,
         }
     )
     df["abs_corr"] = df["value"].abs()
 
     ns = np.zeros(len(df), bool)
-    if p_mat is not None:
-        df["pvalue"] = p_mat.to_numpy()[i, j]
+    if any(m is not None for m in (p_mat, p_upper, p_diag)):
+        df["pvalue"] = assemble(p_mat, p_upper, p_diag)
         ns = (df["pvalue"] > sig_level).to_numpy()
     shown = df[~ns] if insig == "blank" else df
 
@@ -315,14 +398,15 @@ def ggcorrplot(
         low=low, mid=mid, high=high, midpoint=0, limits=(-1, 1),
         name=legend_title,
     )
-    if lab:
-        labels = shown[shown["value"].notna()].assign(
+    if lab or lab_diag:
+        want = np.where(shown["part"] == "diag", lab_diag, lab)
+        labels = shown[want & shown["value"].notna()].assign(
             label=lambda d: [_fmt(v, digits) for v in d["value"]]
         )
         p += geom_text(
             aes(label="label"), data=labels, color=lab_col, size=lab_size
         )
-    if p_mat is not None and insig == "pch" and ns.any():
+    if insig == "pch" and ns.any():
         p += geom_point(
             data=df[ns], shape=pch, color=pch_col, size=pch_cex
         )

@@ -11,8 +11,8 @@ pnx.ggcorrplot(corr, method="square", type="lower", hc_order=True,
 - Takes the **correlation matrix**, not the data. Values outside [-1, 1]
   raise `ValueError`; pass `df.corr()`.
 - Returns a plain `ggplot`: add `+ ggtitle(...)`, `+ theme(...)` etc.
-  The plot data has `var1` (x), `var2` (y), `value`, `abs_corr`, and
-  `pvalue` when `p_mat` is given.
+  The plot data has `var1` (x), `var2` (y), `value`, `abs_corr`, `part`,
+  and `pvalue` when p-values are given.
 - `type`: `"full"`, `"lower"`, `"upper"`. `show_diag` defaults to `True`
   only for `"full"`.
 - `method="circle"`: circle area proportional to |r| on a fixed 0-1
@@ -27,6 +27,19 @@ pnx.ggcorrplot(corr, method="square", type="lower", hc_order=True,
 - `cor_pmat` defaults to **no multiple-testing correction**, as in R. A
   matrix of n variables is n(n - 1) / 2 tests: use `adjust="holm"` or
   `"bh"`. Pairs use rows where both columns are present.
+- **Two matrices in one figure** (e.g. observed vs predicted):
+
+  ```python
+  pnx.ggcorrplot(obs.corr(), upper=pred.corr(), diag=obs.corrwith(pred),
+                 p_mat=pnx.cor_pmat(obs), p_upper=pnx.cor_pmat(pred),
+                 hc_order=True)
+  ```
+
+  `corr` fills the lower (bottom-right) triangle only; `upper` needs
+  `type="full"`. `diag` is one value per variable, labelled by default
+  (`lab_diag`). `hc_order` clusters on `corr` alone. `p_mat` covers only
+  `corr`'s cells; `p_upper`/`p_diag` cover the rest. Plot data gains a
+  `part` column. Add a caption saying which triangle is which.
 - Units: `lab_size` and `tl_cex` are points (R's `lab_size = 4` is about
   11). `tl_srt` rotates the x labels; `tl_col` colours them.
 - Other arguments: `colors=("blue", "white", "red")` for -1/0/1,

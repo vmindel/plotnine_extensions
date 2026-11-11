@@ -38,6 +38,7 @@ SIZES = {
     "themes_cowplot": (5.5, 4),
     "corr_basic": (5.5, 4.8),
     "corr_pmat": (5, 4.5),
+    "corr_obs_pred": (5.5, 5),
     # a composition: its size comes from figure_size inside the example
     "themes_gallery": (13, 6),
 }

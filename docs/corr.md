@@ -33,6 +33,36 @@ drawn. An n-variable matrix is n(n − 1) / 2 tests, so pass
 `adjust="holm"` or `"bh"` unless you have a reason not to; R's
 `cor_pmat` does not adjust.
 
+## Two matrices in one figure
+
+`upper=` puts a second matrix in the upper triangle and `diag=` one
+value per variable on the diagonal; `corr` then fills only the lower
+triangle. The typical case is a model's output against the data:
+observed correlations below, predicted above, and each variable's
+observed-vs-predicted correlation on the diagonal.
+
+```python
+--8<-- "examples/corr_obs_pred.py"
+```
+
+![Observed below, predicted above, accuracy on the diagonal](img/corr_obs_pred.png)
+
+- The lower triangle is the bottom-right one. Say which is which in the
+  figure (a caption, as here): the two halves look alike.
+- The diagonal is a different quantity on the same colour scale, so its
+  cells are labelled by default (`lab_diag=False` turns that off).
+- `hc_order` clusters on `corr` only, so the observed data sets the
+  order and the predicted half cannot pull it towards the model.
+- `p_mat` applies to `corr`'s cells; `p_upper` and `p_diag` give the
+  p-values of the other two parts. Parts without p-values are never
+  marked.
+- `upper` and `diag` are aligned to `corr` by label when they are a
+  DataFrame or Series, by position when they are arrays.
+- Mirrored cells sit across the diagonal from each other, which is good
+  for seeing that the block structure is preserved and poor for reading
+  how much each pair changed. For that, plot the pairs directly:
+  `p.data.query("part != 'diag'")` holds every cell's value and part.
+
 ## Arguments
 
 | | |
@@ -49,10 +79,11 @@ drawn. An n-variable matrix is n(n − 1) / 2 tests, so pass
 | `ggtheme=theme_minimal` | Base theme, a class or an instance |
 | `tl_cex=12`, `tl_col`, `tl_srt=45` | Tick label size (points), colour, x rotation |
 | `title`, `show_legend`, `legend_title="Corr"` | |
+| `upper=None`, `diag=None`, `p_upper=None`, `p_diag=None`, `lab_diag=None` | A second matrix above the diagonal, a vector on it, and their p-values |
 
 The plot's data has one row per drawn cell with columns `var1` (x),
-`var2` (y), `value`, `abs_corr` and, with `p_mat`, `pvalue`, for layers
-of your own.
+`var2` (y), `value`, `abs_corr`, `part` (`"lower"`, `"upper"`, `"diag"`)
+and, with p-values, `pvalue`, for layers of your own.
 
 ## Differences from R
 
@@ -74,4 +105,6 @@ of your own.
 - **Raw data is refused.** A matrix with values outside [−1, 1] raises
   an error instead of being plotted as if it were correlations.
 - Labels keep trailing zeros (`0.50`, not `0.5`).
+- `upper`, `diag`, `p_upper`, `p_diag` and `lab_diag` have no R
+  counterpart.
 - Not included: `as.is`.

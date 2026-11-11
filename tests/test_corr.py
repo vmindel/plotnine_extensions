@@ -171,3 +171,108 @@ def test_cor_pmat_adjust(data):
     )
     with pytest.raises(ValueError, match="adjust"):
         pnx.cor_pmat(data, adjust="fdr")
+
+
+@pytest.fixture
+def obs_pred(data):
+    rng = np.random.default_rng(1)
+    pred = 0.7 * data + rng.normal(scale=0.5, size=data.shape)
+    return data, pred
+
+
+def test_upper_and_diag_fill_their_parts(obs_pred):
+    obs, pred = obs_pred
+    acc = obs.corrwith(pred)
+    p = pnx.ggcorrplot(obs.corr(), upper=pred.corr(), diag=acc)
+    df = cells(p)
+    assert len(df) == 36
+    co, cp = obs.corr(), pred.corr()
+    for _, r in df.iterrows():
+        a, b = r["var1"], r["var2"]
+        want = {"lower": co.loc[a, b], "upper": cp.loc[a, b],
+                "diag": acc[a]}[r["part"]]
+        assert r["value"] == pytest.approx(want)
+    lower = df[df["part"] == "lower"]
+    assert (lower["var1"].cat.codes > lower["var2"].cat.codes).all()
+
+
+def test_diag_labelled_by_default(obs_pred):
+    obs, pred = obs_pred
+    p = pnx.ggcorrplot(obs.corr(), diag=obs.corrwith(pred))
+    labels = layer_data(p, 1)
+    assert set(labels["part"]) == {"diag"} and len(labels) == 6
+    p = pnx.ggcorrplot(obs.corr(), diag=obs.corrwith(pred), lab_diag=False)
+    assert len(p.layers) == 1
+
+
+def test_diag_with_triangle(obs_pred):
+    obs, pred = obs_pred
+    df = cells(pnx.ggcorrplot(obs.corr(), type="lower",
+                              diag=obs.corrwith(pred)))
+    assert len(df) == 21  # show_diag turns on with diag
+
+
+def test_hc_order_on_corr_reorders_parts(obs_pred):
+    obs, pred = obs_pred
+    acc = obs.corrwith(pred)
+    p = pnx.ggcorrplot(obs.corr(), upper=pred.corr(), diag=acc,
+                       hc_order=True)
+    order = list(cells(p)["var1"].cat.categories)
+    assert order == list(cells(pnx.ggcorrplot(obs.corr(), hc_order=True))
+                         ["var1"].cat.categories)
+    d = cells(p)[cells(p)["part"] == "diag"]
+    for _, r in d.iterrows():
+        assert r["value"] == pytest.approx(acc[r["var1"]])
+
+
+def test_diag_aligned_by_label(obs_pred):
+    obs, pred = obs_pred
+    acc = obs.corrwith(pred)
+    a = cells(pnx.ggcorrplot(obs.corr(), diag=acc))
+    b = cells(pnx.ggcorrplot(obs.corr(), diag=acc[::-1]))
+    np.testing.assert_allclose(a["value"], b["value"])
+    with pytest.raises(ValueError, match="diag lacks"):
+        pnx.ggcorrplot(obs.corr(), diag=acc.drop("a"))
+    with pytest.raises(ValueError, match="diag has shape"):
+        pnx.ggcorrplot(obs.corr(), diag=np.ones(4))
+
+
+def test_part_pvalues(obs_pred):
+    obs, pred = obs_pred
+    p_obs, p_pred = pnx.cor_pmat(obs), pnx.cor_pmat(pred)
+    p_acc = pd.Series(0.5, index=obs.columns)
+    df = cells(pnx.ggcorrplot(
+        obs.corr(), upper=pred.corr(), diag=obs.corrwith(pred),
+        p_mat=p_obs, p_upper=p_pred, p_diag=p_acc,
+    ))
+    up = df[df["part"] == "upper"].iloc[0]
+    assert up["pvalue"] == pytest.approx(p_pred.loc[up["var1"], up["var2"]])
+    assert (df.loc[df["part"] == "diag", "pvalue"] == 0.5).all()
+    # p_mat alone says nothing about the upper triangle or the diagonal
+    df = cells(pnx.ggcorrplot(obs.corr(), upper=pred.corr(),
+                              diag=obs.corrwith(pred), p_mat=p_obs))
+    assert df.loc[df["part"] != "lower", "pvalue"].isna().all()
+
+
+def test_upper_diag_validation(obs_pred):
+    obs, pred = obs_pred
+    with pytest.raises(ValueError, match='type="full"'):
+        pnx.ggcorrplot(obs.corr(), upper=pred.corr(), type="lower")
+    with pytest.raises(ValueError, match="upper lacks"):
+        pnx.ggcorrplot(obs.corr(), upper=pred.corr().iloc[:4, :4])
+    with pytest.raises(ValueError, match="outside"):
+        pnx.ggcorrplot(obs.corr(), upper=pred.cov() * 10)
+    with pytest.raises(ValueError, match="show_diag"):
+        pnx.ggcorrplot(obs.corr(), diag=obs.corrwith(pred), show_diag=False)
+    with pytest.raises(ValueError, match="p_upper needs upper"):
+        pnx.ggcorrplot(obs.corr(), p_upper=pnx.cor_pmat(pred))
+
+
+@pytest.mark.parametrize("method", ["square", "circle"])
+def test_obs_pred_renders(obs_pred, method, tmp_path):
+    obs, pred = obs_pred
+    pnx.ggcorrplot(
+        obs.corr(), method=method, upper=pred.corr(),
+        diag=obs.corrwith(pred), p_mat=pnx.cor_pmat(obs),
+        p_upper=pnx.cor_pmat(pred), lab=True,
+    ).save(tmp_path / "p.png", width=4, height=4, dpi=50, verbose=False)
