@@ -50,6 +50,12 @@
 
 ::: plotnine_extensions.hex_bins
 
+## Correlation matrices
+
+::: plotnine_extensions.ggcorrplot
+
+::: plotnine_extensions.cor_pmat
+
 ## Themes: ggpubr
 
 ::: plotnine_extensions.theme_pubr

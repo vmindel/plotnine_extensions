@@ -2,6 +2,7 @@
 ggplot2-ecosystem extensions for plotnine
 """
 
+from .corr import cor_pmat, ggcorrplot
 from .curve import geom_curve
 from .distributions import (
     geom_pointinterval,
@@ -48,6 +49,8 @@ __all__ = [
     "position_jitternudge",
     "stat_halfeye",
     "stat_pointinterval",
+    "cor_pmat",
+    "ggcorrplot",
     "geom_curve",
     "geom_hex",
     "hex_bins",

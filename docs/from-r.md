@@ -21,6 +21,8 @@
 | `ggpubr::rotate_x_text()`, `grids()`, `border()`, `bgcolor()`, `font()`, `clean_theme()` | same names |
 | `cowplot::theme_cowplot()`, `theme_half_open()`, `theme_minimal_grid()`, `theme_minimal_hgrid()`, `theme_minimal_vgrid()`, `theme_map()`, `theme_nothing()` | same names; `line_size` in points (R's 0.5 is 1 here) |
 | `cowplot::background_grid()`, `panel_border()` | same names; `size.major` becomes `size_major`, in points |
+| `ggcorrplot::ggcorrplot(corr, hc.order = TRUE, p.mat = p)` | `ggcorrplot(corr, hc_order=True, p_mat=p)`; `lab_size` in points |
+| `ggcorrplot::cor_pmat(df)` | `cor_pmat(df)`, optionally `adjust="holm"` |
 
 ## ggrepel arguments
 
