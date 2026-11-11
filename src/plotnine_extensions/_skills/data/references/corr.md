@@ -13,8 +13,13 @@ pnx.ggcorrplot(corr, method="square", type="lower", hc_order=True,
 - Returns a plain `ggplot`: add `+ ggtitle(...)`, `+ theme(...)` etc.
   The plot data has `var1` (x), `var2` (y), `value`, `abs_corr`, `part`,
   and `pvalue` when p-values are given.
-- `type`: `"full"`, `"lower"`, `"upper"`. `show_diag` defaults to `True`
-  only for `"full"`.
+- `type`: `"full"`, `"lower"`, `"upper"`, meaning below/above the diagonal
+  as drawn. `show_diag` defaults to `True` only for `"full"` (or when
+  `diag` is given).
+- `layout="plot"` (default, ggcorrplot): first variable bottom left,
+  diagonal rising. `layout="matrix"`: first variable top left, diagonal
+  falling, like a printed matrix or R's corrplot; "lower" is then the
+  bottom-left triangle.
 - `method="circle"`: circle area proportional to |r| on a fixed 0-1
   scale (unlike R, which rescales to the data range).
 - `hc_order=True` clusters on (1 - r) / 2: anticorrelated variables are
@@ -35,7 +40,7 @@ pnx.ggcorrplot(corr, method="square", type="lower", hc_order=True,
                  hc_order=True)
   ```
 
-  `corr` fills the lower (bottom-right) triangle only; `upper` needs
+  `corr` fills the lower triangle only (below the diagonal); `upper` needs
   `type="full"`. `diag` is one value per variable, labelled by default
   (`lab_diag`). `hc_order` clusters on `corr` alone. `p_mat` covers only
   `corr`'s cells; `p_upper`/`p_diag` cover the rest. Plot data gains a

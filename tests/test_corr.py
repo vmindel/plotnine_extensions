@@ -276,3 +276,34 @@ def test_obs_pred_renders(obs_pred, method, tmp_path):
         diag=obs.corrwith(pred), p_mat=pnx.cor_pmat(obs),
         p_upper=pnx.cor_pmat(pred), lab=True,
     ).save(tmp_path / "p.png", width=4, height=4, dpi=50, verbose=False)
+
+
+def test_matrix_layout(data):
+    names = list(data.columns)
+    p = pnx.ggcorrplot(data.corr(), layout="matrix", type="lower")
+    df = cells(p)
+    # first variable at the top: y categories run bottom to top
+    assert list(df["var2"].cat.categories) == names[::-1]
+    pos = {v: k for k, v in enumerate(names)}
+    assert all(pos[b] > pos[a] for a, b in zip(df["var1"], df["var2"]))
+    with pytest.raises(ValueError, match="layout"):
+        pnx.ggcorrplot(data.corr(), layout="corrplot")
+
+
+def test_matrix_layout_parts(obs_pred):
+    obs, pred = obs_pred
+    acc = obs.corrwith(pred)
+    co, cp = obs.corr(), pred.corr()
+    for layout in ("plot", "matrix"):
+        df = cells(pnx.ggcorrplot(co, upper=cp, diag=acc, layout=layout))
+        # "lower" is below the drawn diagonal in both layouts
+        y = df["var2"].cat.codes
+        x = df["var1"].cat.codes.to_numpy()
+        diag_y = x if layout == "plot" else len(co) - 1 - x
+        lower = df["part"] == "lower"
+        assert (y[lower] < diag_y[lower]).all()
+        for _, r in df.iterrows():
+            a, b = r["var1"], r["var2"]
+            want = {"lower": co.loc[a, b], "upper": cp.loc[a, b],
+                    "diag": acc[a]}[r["part"]]
+            assert r["value"] == pytest.approx(want)

@@ -47,8 +47,9 @@ observed-vs-predicted correlation on the diagonal.
 
 ![Observed below, predicted above, accuracy on the diagonal](img/corr_obs_pred.png)
 
-- The lower triangle is the bottom-right one. Say which is which in the
-  figure (a caption, as here): the two halves look alike.
+- The lower triangle is the one below the diagonal: bottom-right here,
+  bottom-left with `layout="matrix"`. Say which is which in the figure
+  (a caption, as here): the two halves look alike.
 - The diagonal is a different quantity on the same colour scale, so its
   cells are labelled by default (`lab_diag=False` turns that off).
 - `hc_order` clusters on `corr` only, so the observed data sets the
@@ -68,7 +69,8 @@ observed-vs-predicted correlation on the diagonal.
 | | |
 |---|---|
 | `method="square"` | Tiles; `"circle"` draws circles with area proportional to \|r\| |
-| `type="full"` | Also `"lower"`, `"upper"` |
+| `type="full"` | Also `"lower"`, `"upper"`: below or above the diagonal as drawn |
+| `layout="plot"` | First variable bottom left, diagonal rising (ggcorrplot); `"matrix"` puts it top left with the diagonal falling, as a printed matrix or corrplot |
 | `show_diag=None` | Diagonal drawn for `"full"` only, unless set |
 | `hc_order=False`, `hc_method="complete"` | Cluster the variables |
 | `lab=False`, `lab_size=11`, `lab_col`, `digits=2` | Coefficients in the cells |
@@ -105,6 +107,6 @@ and, with p-values, `pvalue`, for layers of your own.
 - **Raw data is refused.** A matrix with values outside [−1, 1] raises
   an error instead of being plotted as if it were correlations.
 - Labels keep trailing zeros (`0.50`, not `0.5`).
-- `upper`, `diag`, `p_upper`, `p_diag` and `lab_diag` have no R
-  counterpart.
+- `upper`, `diag`, `p_upper`, `p_diag`, `lab_diag` and `layout` have no
+  ggcorrplot counterpart.
 - Not included: `as.is`.

@@ -209,6 +209,7 @@ def ggcorrplot(
     p_upper=None,
     p_diag=None,
     lab_diag: bool | None = None,
+    layout: Literal["plot", "matrix"] = "plot",
 ) -> ggplot:
     """
     Heatmap of a correlation matrix
@@ -218,7 +219,9 @@ def ggcorrplot(
     `var1` (x), `var2` (y), `value`, `abs_corr`, `part` (`"lower"`,
     `"upper"` or `"diag"`), and `pvalue` when p-values are given.
 
-    The lower triangle is the bottom-right one (x after y). With `upper`
+    "lower" always means below the diagonal as drawn: bottom-right with
+    the default `layout="plot"`, bottom-left with `layout="matrix"`.
+    With `upper`
     and `diag`, one figure can hold two matrices and a per-variable
     score, e.g. observed correlations below, predicted ones above and
     observed-vs-predicted accuracy on the diagonal.
@@ -289,6 +292,11 @@ def ggcorrplot(
         Label the diagonal cells. By default when `diag` is given (its
         values share the colour scale but mean something else) or when
         `lab` is set.
+    layout : {"plot", "matrix"}
+        `"plot"` (ggcorrplot's): the first variable at the bottom left,
+        the diagonal rising to the right. `"matrix"`: the first variable
+        at the top left, the diagonal falling to the right, as a printed
+        matrix or R's corrplot.
     """
     if method not in ("square", "circle"):
         raise ValueError(f'method must be "square" or "circle", got {method!r}')
@@ -296,6 +304,8 @@ def ggcorrplot(
         raise ValueError(
             f'type must be "full", "lower" or "upper", got {type!r}'
         )
+    if layout not in ("plot", "matrix"):
+        raise ValueError(f'layout must be "plot" or "matrix", got {layout!r}')
     if insig not in ("pch", "blank"):
         raise ValueError(f'insig must be "pch" or "blank", got {insig!r}')
     if len(colors) != 3:
@@ -343,15 +353,19 @@ def ggcorrplot(
     names = list(corr.index)
     n = len(names)
     i, j = np.meshgrid(np.arange(n), np.arange(n), indexing="ij")
+    # "lower" is below the drawn diagonal: x after y when y rises
+    # (layout="plot"), y after x when y falls (layout="matrix")
+    below = i > j if layout == "plot" else j > i
+    above = (i != j) & ~below
     keep = np.ones((n, n), bool)
     if type == "lower":
-        keep = i >= j
+        keep = below | (i == j)
     elif type == "upper":
-        keep = i <= j
+        keep = above | (i == j)
     if not show_diag:
         keep &= i != j
     i, j = i[keep], j[keep]
-    part = np.select([i > j, i < j], ["lower", "upper"], "diag")
+    part = np.select([below[keep], above[keep]], ["lower", "upper"], "diag")
     is_up, is_diag = part == "upper", part == "diag"
 
     def assemble(mat, up, dg):
@@ -367,7 +381,10 @@ def ggcorrplot(
     df = pd.DataFrame(
         {
             "var1": pd.Categorical.from_codes(i, names),
-            "var2": pd.Categorical.from_codes(j, names),
+            # reversed categories put the first variable at the top
+            "var2": pd.Categorical.from_codes(j, names)
+            if layout == "plot"
+            else pd.Categorical.from_codes(n - 1 - j, names[::-1]),
             "value": assemble(corr, upper, diag),
             "part": part,
         }
