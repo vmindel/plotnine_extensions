@@ -274,16 +274,18 @@ def _widen_guide(g: Any) -> Any:
     if "any" in cls().available_aes:
         return g
     if g not in _WIDE_GUIDES:
-
-        def __post_init__(self):
-            cls.__post_init__(self)
+        # __init__, not __post_init__: a dataclass's generated __init__
+        # calls __post_init__ only if the decorated class had one, and
+        # guide_colorbar has none in plotnine's development branch
+        def __init__(self, *args, **kwargs):
+            cls.__init__(self, *args, **kwargs)
             self.available_aes = _BaseNames(self.available_aes)
 
         # Registry holds weak references; _WIDE_GUIDES keeps it alive.
         # A module attribute, so that drawn plots (whose guides are
         # instances of it) can be pickled.
         name = f"guide_newscale_{g}"
-        wide = type(name, (cls,), {"__post_init__": __post_init__})
+        wide = type(name, (cls,), {"__init__": __init__})
         wide.__module__ = __name__
         globals()[name] = _WIDE_GUIDES[g] = wide
     return f"newscale_{g}"

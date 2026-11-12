@@ -26,6 +26,7 @@ from plotnine import (
     scale_fill_gradient,
     scale_fill_manual,
 )
+from plotnine.exceptions import PlotnineWarning
 from plotnine.layer import layer
 
 import plotnine_extensions as pnx
@@ -75,8 +76,10 @@ def legends(p):
 
 
 def draw(p):
+    # plotnine's own warnings (e.g. "Cannot generate legend") fail the
+    # test; deprecation notices from pandas or plotnine internals do not
     with warnings.catch_warnings():
-        warnings.simplefilter("error")
+        warnings.simplefilter("error", PlotnineWarning)
         return p.draw()
 
 
