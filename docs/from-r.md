@@ -23,6 +23,7 @@
 | `cowplot::background_grid()`, `panel_border()` | same names; `size.major` becomes `size_major`, in points |
 | `ggcorrplot::ggcorrplot(corr, hc.order = TRUE, p.mat = p)` | `ggcorrplot(corr, hc_order=True, p_mat=p)`; `lab_size` in points |
 | `ggcorrplot::cor_pmat(df)` | `cor_pmat(df)`, optionally `adjust="holm"` |
+| `ggnewscale::new_scale_fill()`, `new_scale_colour()`, `new_scale("size")` | same names; also `new_scale_color()` |
 
 ## ggrepel arguments
 

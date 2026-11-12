@@ -56,6 +56,16 @@
 
 ::: plotnine_extensions.cor_pmat
 
+## Several scales per aesthetic
+
+::: plotnine_extensions.new_scale
+
+::: plotnine_extensions.new_scale_color
+
+`new_scale_colour` is the same function under its British spelling.
+
+::: plotnine_extensions.new_scale_fill
+
 ## Themes: ggpubr
 
 ::: plotnine_extensions.theme_pubr

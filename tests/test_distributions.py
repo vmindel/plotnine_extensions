@@ -6,6 +6,8 @@ import pandas as pd
 import pytest
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.collections import LineCollection
+from matplotlib.colors import to_hex
+from matplotlib.text import Text
 from plotnine import aes, coord_flip, geom_point, geom_violin, ggplot
 
 from plotnine_extensions import (
@@ -107,3 +109,53 @@ def test_render_without_warnings(df):
             p = ggplot(df, aes("g", "y")) + layers
             buf = io.BytesIO()
             p.save(buf, format="png", width=4, height=3, dpi=50, verbose=False)
+
+
+def legend_artists(fig):
+    """
+    Artists of the legend keys (the legend is the figure's only OffsetBox)
+    """
+    from matplotlib.lines import Line2D
+    from matplotlib.offsetbox import DrawingArea
+
+    return [
+        a
+        for da in fig.findobj(DrawingArea)
+        for a in da.get_children()
+        if isinstance(a, Line2D)
+    ]
+
+
+@pytest.mark.parametrize(
+    "layers",
+    [
+        lambda m: stat_halfeye(m),
+        lambda m: stat_pointinterval(m),
+        lambda m: geom_raincloud(m),
+    ],
+    ids=["halfeye", "pointinterval", "raincloud"],
+)
+@pytest.mark.parametrize("ae", ["fill", "color"])
+def test_legend_with_mapped_aesthetic(df, layers, ae):
+    # The point-interval legend used to read a size column it never has
+    p = ggplot(df, aes("g", "y")) + layers(aes(**{ae: "g"}))
+    fig = built(p)
+    labels = {t.get_text() for t in fig.findobj(Text)}
+    assert {"g", "a", "b"} <= labels
+    assert legend_artists(fig)
+
+
+def test_pointinterval_legend_key(df):
+    p = ggplot(df, aes("g", "y")) + stat_pointinterval(
+        aes(fill="g"), interval_size=(0.5, 2), point_size=3
+    )
+    keys = legend_artists(built(p))
+    lines = [k for k in keys if k.get_marker() in (None, "None", "")]
+    points = [k for k in keys if k.get_marker() == "o"]
+    assert len(lines) == len(points) == 2  # one per level
+    # the key's line is the narrowest interval, which is drawn thickest
+    from plotnine._utils import SIZE_FACTOR
+
+    assert lines[0].get_linewidth() == pytest.approx(2 * SIZE_FACTOR)
+    fills = {to_hex(k.get_markerfacecolor()) for k in points}
+    assert len(fills) == 2

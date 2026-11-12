@@ -15,7 +15,6 @@ import pandas as pd
 from plotnine import geom_boxplot, geom_point, geom_violin, position_nudge
 from plotnine._utils import SIZE_FACTOR, to_rgba
 from plotnine.geoms.geom import geom
-from plotnine.geoms.geom_path import geom_path
 from plotnine.positions.position_jitter import position_jitter
 from plotnine.stats.stat import stat
 
@@ -126,7 +125,43 @@ class geom_pointinterval(geom):
         "interval_size": (0.6, 1.8),
         "point_size": 1.8,
     }
-    draw_legend = staticmethod(geom_path.draw_legend)
+
+    @staticmethod
+    def draw_legend(data: pd.Series, da, lyr):
+        """
+        The narrowest interval with the point on it, as in the panel
+
+        The sizes come from the `interval_size` and `point_size`
+        parameters; the geom has no size aesthetic.
+        """
+        from matplotlib.lines import Line2D
+
+        params = lyr.geom.params
+        color = to_rgba(data["color"], data["alpha"])
+        fill = data["fill"] if data["fill"] is not None else data["color"]
+        y = 0.5 * da.height
+        da.add_artist(
+            Line2D(
+                [0, da.width],
+                [y, y],
+                linewidth=params["interval_size"][1] * SIZE_FACTOR,
+                color=color,
+                solid_capstyle="butt",
+            )
+        )
+        # The panel's scatter takes the area; a marker takes the diameter
+        da.add_artist(
+            Line2D(
+                [0.5 * da.width],
+                [y],
+                marker="o",
+                markersize=params["point_size"] * SIZE_FACTOR + 0.5,
+                markerfacecolor=to_rgba(fill, data["alpha"]),
+                markeredgecolor=color,
+                markeredgewidth=0.5,
+            )
+        )
+        return da
 
     def draw_panel(
         self,
@@ -293,7 +328,7 @@ def stat_halfeye(
     position = position_nudge(x=nudge) if nudge else "identity"
     return [
         geom_violin(
-            mapping,
+            _without(mapping, "color"),
             data,
             style="right",
             width=2 * width,
@@ -363,7 +398,7 @@ def geom_raincloud(
     gap = box_width / 2 + 0.03
     layers: list = [
         geom_violin(
-            mapping,
+            _without(mapping, "color"),
             data,
             style="right",
             width=2 * width,
@@ -400,3 +435,17 @@ def geom_raincloud(
         )
     )
     return layers
+
+
+def _without(mapping: aes | None, ae: str) -> aes | None:
+    """
+    The mapping minus one aesthetic
+
+    The slabs take no outline colour (``color=None``); a mapped colour
+    is for the intervals, points and boxes, as in ggdist.
+    """
+    if mapping is None:
+        return None
+    from plotnine import aes as make_aes
+
+    return make_aes(**{k: v for k, v in mapping.items() if k != ae})

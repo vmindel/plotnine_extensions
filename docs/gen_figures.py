@@ -39,6 +39,8 @@ SIZES = {
     "corr_basic": (5.5, 4.8),
     "corr_pmat": (5, 4.5),
     "corr_obs_pred": (5.5, 5),
+    "newscale_heatmap": (5, 4.5),
+    "newscale_color": (5.5, 4),
     # a composition: its size comes from figure_size inside the example
     "themes_gallery": (13, 6),
 }
