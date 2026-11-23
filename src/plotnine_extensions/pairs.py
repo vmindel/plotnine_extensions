@@ -23,7 +23,6 @@ from plotnine import (
     ggplot,
     labs,
 )
-from plotnine.layer import layer as _layer
 
 from .corr import CORR_METHODS
 from .signif import ADJUSTMENTS, p_adjust
@@ -120,20 +119,22 @@ def _as_layers(spec, part: str, what: str) -> list:
         if isinstance(obj, (list, tuple)):
             out.extend(_as_layers(list(obj), part, what))
             continue
-        obj = deepcopy(obj)
-        if isinstance(obj, _layer):
-            lyr = obj
-        elif hasattr(obj, "to_layer"):
-            lyr = obj.to_layer()
-        else:
+        # Adding to an empty plot is how every plotnine version turns a
+        # geom or stat into layers; aes, scales and themes add none
+        try:
+            added = (ggplot() + deepcopy(obj)).layers
+        except (AttributeError, TypeError):
+            added = []
+        if not added:
             raise TypeError(
                 f"{what} must hold geoms, stats or layers, got "
                 f"{type(obj).__name__}"
             )
-        # A layer with its own data is the caller's business
-        if lyr._data is None:
-            lyr._data = subset
-        out.append(lyr)
+        for lyr in added:
+            # A layer with its own data is the caller's business
+            if lyr._data is None:
+                lyr._data = subset
+            out.append(lyr)
     return out
 
 
