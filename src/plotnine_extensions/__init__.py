@@ -19,6 +19,7 @@ from .newscale import (
     new_scale_fill,
 )
 from .logo import LOGO_PALETTES, geom_logo, logo_data
+from .pairs import ggpairs
 from .raster import RasterGroup, rasterise, rasterize
 from .repel import geom_label_repel, geom_text_repel
 from .signif import format_p, geom_bracket, p_adjust, stat_compare_means
@@ -57,6 +58,7 @@ __all__ = [
     "stat_pointinterval",
     "cor_pmat",
     "ggcorrplot",
+    "ggpairs",
     "geom_curve",
     "geom_hex",
     "hex_bins",

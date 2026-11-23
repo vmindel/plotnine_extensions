@@ -56,6 +56,10 @@
 
 ::: plotnine_extensions.cor_pmat
 
+## Scatterplot matrices
+
+::: plotnine_extensions.ggpairs
+
 ## Several scales per aesthetic
 
 ::: plotnine_extensions.new_scale
